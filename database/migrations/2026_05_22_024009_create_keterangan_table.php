@@ -8,14 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('atk', function (Blueprint $table) {
+        Schema::create('keterangan', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_barang', 50);
-            $table->string('nama_barang', 255);
-            $table->enum('kategori', ['alat_tulis', 'kertas', 'peralatan', 'lainnya'])->default('alat_tulis');
-            $table->enum('satuan', ['pcs', 'box', 'pak', 'rim'])->default('pcs');
+            $table->string('nomor_rak', 20);
+            $table->string('judul', 255);
+            $table->string('penerbit', 100);
+            $table->string('kelas', 10);
+            $table->enum('semester', ['1', '2']);
+            $table->enum('kurikulum', ['kurikulum_merdeka', 'kurikulum_2013']);
             $table->integer('stok')->default(0);
-            $table->text('keterangan')->nullable();
             $table->string('gambar')->nullable();
             $table->timestamps();
         });
@@ -23,6 +24,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('atk');
+        Schema::dropIfExists('keterangan');
     }
 };
