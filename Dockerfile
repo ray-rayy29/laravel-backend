@@ -1,6 +1,6 @@
 FROM php:8.2-fpm-alpine
 
-# PERBAIKAN: Menambahkan gettext agar envsubst bisa terbaca oleh Nginx Alpine 👇
+# Install extensions & system utilities + gettext untuk envsubst
 RUN apk add --no-cache nginx supervisor curl libpng-dev libxml2-dev zip unzip git gettext \
     && docker-php-ext-install pdo_mysql bcmath gd
 
@@ -19,10 +19,10 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev
 # Setup Nginx configuration
 COPY ./nginx.conf /etc/nginx/nginx.conf
 
-# Permissions
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+# PERBAIKAN RADIKAL: Berikan hak akses penuh ke Nginx (www-data) untuk SELURUH folder /var/www 👇
+RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www/storage /var/www/bootstrap/cache
 
 EXPOSE 80
 
-# Jalankan envsubst untuk menyuntikkan $PORT baru kemudian nyalakan php-fpm dan nginx
+# Jalankan envsubst untuk menyuntikkan $PORT, lalu jalankan php-fpm dan nginx
 CMD sh -c "envsubst '\$PORT' < /etc/nginx/nginx.conf > /etc/nginx/nginx.conf.tmp && mv /etc/nginx/nginx.conf.tmp /etc/nginx/nginx.conf && php-fpm -D && nginx -g 'daemon off;'"
