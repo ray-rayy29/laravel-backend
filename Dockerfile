@@ -24,4 +24,5 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+# Jalankan envsubst untuk menyuntikkan $PORT baru kemudian nyalakan php-fpm dan nginx
+CMD sh -c "envsubst '\$PORT' < /etc/nginx/nginx.conf > /etc/nginx/nginx.conf.tmp && mv /etc/nginx/nginx.conf.tmp /etc/nginx/nginx.conf && php-fpm -D && nginx -g 'daemon off;'"
